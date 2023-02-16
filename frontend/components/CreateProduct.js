@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
+import Router from 'next/router';
 import Form from './styles/Form';
 import useForm from '../lib/useForm';
 import DisplayError from './ErrorMessage';
@@ -50,9 +51,9 @@ export default function CreateProduct() {
     <Form
       onSubmit={async (e) => {
         e.preventDefault();
-        console.log(inputs);
         const res = await createProduct();
-        console.log(res);
+        clearForm();
+        Router.push({ pathname: `/product/${res.data.createProduct.id}` });
       }}
     >
       <DisplayError error={error} />
