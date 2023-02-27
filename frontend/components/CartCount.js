@@ -1,6 +1,24 @@
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import styled from 'styled-components';
 
+export default function CartCount({ count }) {
+  return (
+    <AnimationStyles>
+      <TransitionGroup>
+        <CSSTransition
+          unmountOnExit
+          className="count"
+          classNames="count"
+          key={count}
+          timeout={{ enter: 400, exit: 400 }}
+        >
+          <Dot>{count}</Dot>
+        </CSSTransition>
+      </TransitionGroup>
+    </AnimationStyles>
+  );
+}
+
 const Dot = styled.div`
   background: var(--red);
   color: white;
@@ -36,21 +54,3 @@ const AnimationStyles = styled.span`
     transform: scale(4) rotate(0.5turn);
   }
 `;
-
-export default function CartCount({ count }) {
-  return (
-    <AnimationStyles>
-      <TransitionGroup>
-        <CSSTransition
-          unmountOnExit
-          className="count"
-          classNames="count"
-          key={count}
-          timeout={{ enter: 400, exit: 400 }}
-        >
-          <Dot>{count}</Dot>
-        </CSSTransition>
-      </TransitionGroup>
-    </AnimationStyles>
-  );
-}
