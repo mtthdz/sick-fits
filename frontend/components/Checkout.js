@@ -10,7 +10,10 @@ import {
 import { useState } from 'react';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
+import { useRouter } from 'next/dist/client/router';
+import { useCart } from '../lib/cartState';
 import SickButton from './styles/SickButton';
+import { CURRENT_USER_QUERY } from './User';
 
 const stripeLib = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY);
 
@@ -33,8 +36,13 @@ function CheckoutForm() {
   const [loading, setLoading] = useState(false);
   const stripe = useStripe();
   const elements = useElements();
+  const router = useRouter();
+  const { closeCart } = useCart();
   const [checkout, { error: graphQLError }] = useMutation(
-    CREATE_ORDER_MUTATION
+    CREATE_ORDER_MUTATION,
+    {
+      refetchQueries: [{ query: CURRENT_USER_QUERY }],
+    }
   );
 
   async function handleSubmit(e) {
@@ -61,7 +69,12 @@ function CheckoutForm() {
     }
 
     const order = await checkout({ variables: { token: paymentMethod.id } });
+    router.push({
+      pathname: '/order/[id]',
+      query: { id: order.data.checkout.id },
+    });
 
+    closeCart();
     setLoading(false);
     NProgress.done();
   }
