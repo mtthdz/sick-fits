@@ -60,6 +60,8 @@ function CheckoutForm() {
       return;
     }
 
+    const order = await checkout({ variables: { token: paymentMethod.id } });
+
     setLoading(false);
     NProgress.done();
   }
