@@ -21,3 +21,28 @@ export const permissions = {
     return session?.data.name.includes('Matt');
   },
 };
+
+/**
+ * rules can return a boolean
+ * or a filter to limit crud access
+ */
+export const rules = {
+  canManageProducts({ session }: ListAccessArgs) {
+    // check for permission
+    if (permissions.canManageProducts({ session })) {
+      return true;
+    }
+
+    // else, check for ownership
+    return { user: { id: session.itemId } };
+  },
+
+  canReadProducts({ session }: ListAccessArgs) {
+    if (permissions.canManageProducts({ session })) {
+      return true;
+    }
+
+    // else, can only see available products
+    return { status: 'AVAILABLE' };
+  },
+};
