@@ -28,6 +28,10 @@ export const permissions = {
  */
 export const rules = {
   canManageProducts({ session }: ListAccessArgs) {
+    if (!isSignedIn({ session })) {
+      return false;
+    }
+
     // check for permission
     if (permissions.canManageProducts({ session })) {
       return true;
@@ -37,12 +41,43 @@ export const rules = {
     return { user: { id: session.itemId } };
   },
 
-  canReadProducts({ session }: ListAccessArgs) {
-    if (permissions.canManageProducts({ session })) {
+  canOrder({ session }: ListAccessArgs) {
+    if (!isSignedIn({ session })) {
+      return false;
+    }
+
+    // check for permission
+    if (permissions.canManageCart({ session })) {
       return true;
     }
 
-    // else, can only see available products
+    // else, check for ownership
+    return { user: { id: session.itemId } };
+  },
+
+  canManageOrderItems({ session }: ListAccessArgs) {
+    if (!isSignedIn({ session })) {
+      return false;
+    }
+
+    // check for permission
+    if (permissions.canManageCart({ session })) {
+      return true;
+    }
+
+    // else, check for ownership
+    return { order: { user: { id: session.itemId } } };
+  },
+
+  canReadProducts({ session }: ListAccessArgs) {
+    if (!isSignedIn({ session })) {
+      return false;
+    }
+
+    if (permissions.canManageProducts({ session })) {
+      return true; // They can read everything!
+    }
+    // They should only see available products (based on the status field)
     return { status: 'AVAILABLE' };
   },
 };
