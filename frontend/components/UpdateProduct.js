@@ -62,7 +62,6 @@ export default function UpdateProduct({ id }) {
             price: inputs.price,
           },
         }).catch(error);
-        console.log(res);
       }}
     >
       <DisplayError error={error || updateError} />
